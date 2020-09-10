@@ -2,7 +2,7 @@
 // e fare le 4 operazioni Create, Read, Update e Delete.
 
 $(document).ready(function() {
-    getData();
+    getData();   // Ottengo i dati dall' API
 
     $(document).on('click','span.delete',function(){
         var elemento = $(this);
@@ -14,7 +14,44 @@ $(document).ready(function() {
         var newElement = $('#nuova-voce').val();
         createElement(newElement);
     });
+
+    $(document).on("click", "span.testo", function() {
+        var elemento = $(this);
+        $(".testo").removeClass("hidden");
+        elemento.addClass("hidden");
+
+        $(".testo").next().addClass("hidden");
+        elemento.next().removeClass("hidden");
+    });
+
+    $(document).on("keydown", ".input-add", function() {
+        var idNewElement = $(this).parent().attr("data-id");
+        if (event.which == 13 || event.keyCode == 13) {
+            var newElement = $(this).val();
+            updateElement(idNewElement, newElement);
+        }
+    });
 });
+
+function updateElement(id, elemento){
+    $.ajax(
+        {
+            url: 'http://157.230.17.132:3026/todos/' + id,
+            method: 'PUT',
+            data: {
+                text: elemento
+            },
+            success:  function(risposta){
+                console.log(risposta);
+                $('.todos').html('');
+                getData();
+            },
+            error: function(){
+                alert('Errore');
+            },
+        }
+    )
+};
 
 function getData(){
     $.ajax(
